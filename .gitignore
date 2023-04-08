@@ -1,0 +1,9 @@
+# Ignore output_images folder
+output_images/
+
+# Ignore input_images folder
+input_images/
+
+# Ignore env file
+env.*
+.env*
