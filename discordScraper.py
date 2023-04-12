@@ -6,6 +6,7 @@ from PIL import Image
 import os
 import asyncio
 import aiosqlite
+import aiohttp
 
 load_dotenv()
 client = commands.Bot(command_prefix="*", intents=discord.Intents.all(), help_command=None)
@@ -37,46 +38,37 @@ def split_image(image_file):
         return top_left, top_right, bottom_left, bottom_right
 
 async def download_image(url, filename):
-    response = requests.get(url)
-    if response.status_code == 200:
-        input_folder = "input_images"
-        output_folder = "output_images"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                input_folder = "input_images"
+                output_folder = "output_images"
 
-        if not os.path.exists(output_folder):
-            os.makedirs(output_folder)
-        if not os.path.exists(input_folder):
-            os.makedirs(input_folder)
+                if not os.path.exists(output_folder):
+                    os.makedirs(output_folder)
+                if not os.path.exists(input_folder):
+                    os.makedirs(input_folder)
 
-        with open(f"{directory}/{input_folder}/{filename}", "wb") as f:
-            f.write(response.content)
-        print(f"Image downloaded: {filename}")
+                with open(f"{directory}/{input_folder}/{filename}", "wb") as f:
+                    f.write(await response.content.read())
+                print(f"Image downloaded: {filename}")
 
-        input_file = os.path.join(input_folder, filename)
+                input_file = os.path.join(input_folder, filename)
 
-        if "UPSCALED_" not in filename:
-            file_prefix = os.path.splitext(filename)[0]
-            top_left, top_right, bottom_left, bottom_right = split_image(input_file)
-            top_left.save(os.path.join(output_folder, file_prefix + "_top_left.jpg"))
-            top_right.save(os.path.join(output_folder, file_prefix + "_top_right.jpg"))
-            bottom_left.save(os.path.join(output_folder, file_prefix + "_bottom_left.jpg"))
-            bottom_right.save(os.path.join(output_folder, file_prefix + "_bottom_right.jpg"))
+                if "UPSCALED_" not in filename:
+                    file_prefix = os.path.splitext(filename)[0]
+                    top_left, top_right, bottom_left, bottom_right = split_image(input_file)
+                    top_left.save(os.path.join(output_folder, file_prefix + "_top_left.jpg"))
+                    top_right.save(os.path.join(output_folder, file_prefix + "_top_right.jpg"))
+                    bottom_left.save(os.path.join(output_folder, file_prefix + "_bottom_left.jpg"))
+                    bottom_right.save(os.path.join(output_folder, file_prefix + "_bottom_right.jpg"))
 
-        else:
-            os.rename(f"{directory}/{input_folder}/{filename}", f"{directory}/{output_folder}/{filename}")
-        os.remove(f"{directory}/{input_folder}/{filename}")
+                else:
+                    os.rename(f"{directory}/{input_folder}/{filename}", f"{directory}/{output_folder}/{filename}")
+                os.remove(f"{directory}/{input_folder}/{filename}")
 
-# @client.command(name="scrape_images")
-# async def scrape_images_command(ctx, limit: int = 100):
-#     async for message in ctx.channel.history(limit=limit):
-#         for attachment in message.attachments:
-#             if "Upscaled by" in message.content:
-#                 file_prefix = 'UPSCALED_'
-#             else:
-#                 file_prefix = ''
-#             if attachment.filename.lower().endswith((".png", ".jpg", ".jpeg", ".gif")):
-#                 await download_image(attachment.url, f"{file_prefix}{attachment.filename}")
 @client.command(name="scrape_images")
-async def scrape_images_command(ctx, limit: int = 100):
+async def scrape_images_command(ctx, limit: int = 500):
     last_processed_message_id = None
 
     async with db.execute(
@@ -102,7 +94,36 @@ async def scrape_images_command(ctx, limit: int = 100):
         )
         await db.commit()
 
+def resize_image(image_file, max_size=3840):
+    with Image.open(image_file) as im:
+        width, height = im.size
+        if max(width, height) > max_size:
+            if width > height:
+                new_width = max_size
+                new_height = int(height * (max_size / width))
+            else:
+                new_width = int(width * (max_size / height))
+                new_height = max_size
 
+            im_resized = im.resize((new_width, new_height), Image.LANCZOS)
+            return im_resized
+        else:
+            return im
+
+@client.command(name="resize_images")
+async def resize_images_command(ctx):
+    output_folder = "output_images"
+    resized_folder = "resized_images"
+
+    if not os.path.exists(resized_folder):
+        os.makedirs(resized_folder)
+
+    for file in os.listdir(output_folder):
+        file_path = os.path.join(output_folder, file)
+        if os.path.isfile(file_path) and file.lower().endswith((".png", ".jpg", ".jpeg", ".gif")):
+            resized_image = resize_image(file_path)
+            resized_image.save(os.path.join(resized_folder, file))
+            print(f"Image resized: {file}")
 
 @client.event
 async def on_ready():
@@ -126,4 +147,3 @@ async def on_message(message):
             await download_image(attachment.url, f"{file_prefix}{attachment.filename}")
 
 client.run(discord_token)
-
