@@ -1,63 +1,57 @@
-# cda.discordScraper was made for a personal workflow
+# 🖼️ Discord Image Scraper Bot 🤖
 
-## Functionality
+This Discord bot scrapes images from a Discord channel's history, processes them, and resizes them while maintaining quality and details with resampling. The largest side of the resized images will be 3840 pixels.
 
-- Listen to discord channel via bot application and ap1 t0ken
+## Features
 
-- Download any images as they come in
-- Images that are in a 2:2 grid are cropped into 4 individual images and saved to output_folder.
+- Scrape images from Discord channel history 💾
+- Automatically split images into quadrants and save them 🌐
+- Resize images while preserving quality and details 🔎
+- Detect and redownload corrupted images 🚨
+- Docker support for easy deployment 🐳
 
-- Images are indexed so that they shouldnt be duplicated.
+## Commands 📜
 
-### Commands via discord message
+1. `*scrape_images <limit>`
+   - Scrape images from the channel's history up to the specified limit (default: 500) and save them into the output folder.
+   - Example: `*scrape_images 200`
+2. `*resize_images`
+   - Resize the images in the output folder so that the largest side is 3840 pixels, maintaining their quality and details with resampling. The resized images are saved in the `resized_images` folder.
+   - Example: `*resize_images`
 
-- Use the ```*scrape_images 500``` 
-command from the channel to scrape older images.
+## Setup 🚀
+See discord developers portal for API key and channel_id
 
-#### Docker command
+### Requirements
 
-```
-docker run -d -p 8000:8000 -v /my/computer/file:/app/output_images --name discordScraper discordScraper
-```
+- Python 3.9+
+- Docker (optional)
 
----
+### Installation
 
-# How to use docker tag commands with Docker Registry
+1. Clone the repository:
+2. Install the required packages:
+3. Set up the `.env` file with your Discord bot token:
+4. Run the script:
 
-To clarify, the docker run command I provided in the previous response is for running a Docker container using a locally built image. The command does not interact with a remote repository or push the image to any repository.
 
-If you want to tag your Docker image and push it to a remote repository, such as Docker Hub or a private container registry, you need to follow these steps:
+### Docker Deployment 🐳
 
-Build and tag your Docker image:
+1. Build the Docker image:
+2. Run the Docker container, replacing `your_bot_token_here` with your Discord bot token:
 
-```
-docker build -t your_dockerhub_username/your_image_name:your_tag .
-```
+``` 
+docker build -t discord_image_scraper .
+``` 
 
-Replace your_dockerhub_username with your Docker Hub username, your_image_name with a name for your Docker image, and your_tag with a tag for your image (e.g., "latest", "v1.0", etc.).
+``` 
+docker run -e DISCORD_BOT_TOKEN=your_bot_token_here discord_image_scraper
+``` 
 
-Log in to Docker Hub (or your private container registry) using the docker login command:
+## Contributing 🤝
 
-```
-docker login
-```
+Feel free to open issues or submit pull requests if you have any suggestions, improvements, or bug reports.
 
-Enter your Docker Hub (or private registry) credentials when prompted.
+## License
 
-Push your tagged image to the remote repository:
-
-```
-docker push your_dockerhub_username/your_image_name:your_tag
-```
-
-Replace your_dockerhub_username, your_image_name, and your_tag as you did in step 1.
-
-Now your Docker image is tagged and pushed to the remote repository.
-
-To run a Docker container using the image from the remote repository, you can use the following command:
-
-```
-docker run -d -p 8000:8000 -v /my/computer/file:/app/output_images --name your_container_name your_dockerhub_username/your_image_name:your_tag
-```
-
-Replace your_container_name, your_dockerhub_username, your_image_name, and your_tag as needed. Docker will pull the image from the remote repository if it's not already present on your local machine.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for more information.

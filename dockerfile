@@ -17,4 +17,4 @@ RUN mkdir output
 COPY image_scraper_bot.py .
 
 # Run the bot script
-CMD ["python", "image_scraper_bot.py"]
+CMD ["python", "discordScraper.py"]
