@@ -1,0 +1,12 @@
+# Ignore image_scraping_bot.db ((for indexing photos scrapted) your instance will create this file)
+*.db
+
+# Ignore output_images folder
+output_images/
+
+# Ignore input_images folder
+input_images/
+
+# Ignore env file
+env.*
+.env*
