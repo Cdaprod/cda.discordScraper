@@ -14,6 +14,8 @@
 
 # 🖼️ Discord Image Scraper Bot 🤖
 
+Its under the python folder, javascript is me still learning javascript...
+
 This Discord bot scrapes images from a Discord channel's history, processes them, and resizes them while maintaining quality and details with resampling. The largest side of the resized images will be 3840 pixels.
 
 ## Features
