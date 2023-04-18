@@ -1,3 +1,17 @@
+<a href="https://www.linkedin.com/in/cdasmkt" target="_blank">
+  <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn profile" />
+</a>
+<a href="https://twitter.com/cdasmktcda" target="_blank">
+  <img src="https://img.shields.io/badge/Twitter-1DA1F2?style=flat&logo=twitter&logoColor=white" alt="Twitter profile" />
+</a>
+<a href="https://www.facebook.com/davidacannan" target="_blank">
+  <img src="https://img.shields.io/badge/Facebook-1877F2?style=flat&logo=facebook&logoColor=white" alt="Facebook profile" />
+</a>
+<a href="https://github.com/cdaprod" target="_blank">
+  <img src="https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white" alt="GitHub profile" />
+</a>
+
+
 # 🖼️ Discord Image Scraper Bot 🤖
 
 This Discord bot scrapes images from a Discord channel's history, processes them, and resizes them while maintaining quality and details with resampling. The largest side of the resized images will be 3840 pixels.
